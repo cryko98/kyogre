@@ -3,57 +3,52 @@ import { GoogleGenAI } from "@google/genai";
 
 /**
  * Generates a Kyogre-themed image using the Gemini 2.5 Flash Image model.
+ * Adheres strictly to the @google/genai SDK guidelines.
  */
 export async function generateKyogreMeme(prompt: string, logoUrl: string) {
-  // Megpróbáljuk kinyerni a kulcsot minden lehetséges helyről
-  const apiKey = (window as any).process?.env?.API_KEY || 
-                 (window as any).VITE_API_KEY || 
-                 (window as any).API_KEY;
+  // Initialize the GenAI client with the mandatory environment variable.
+  // The system handles the injection of process.env.API_KEY.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-  if (!apiKey) {
-    throw new Error("HIÁNYZÓ API KULCS: Kérlek ellenőrizd, hogy az API_KEY be van-e állítva a környezeti változók között!");
-  }
+  const parts: any[] = [];
 
-  // Új példány létrehozása a legfrissebb kulccsal
-  const ai = new GoogleGenAI({ apiKey: apiKey });
-
-  let referencePart: any = null;
-  
-  // Logó fetch kísérlet
+  // Attempt to include the logo as context for the generation
   try {
-    const resp = await fetch(logoUrl);
-    if (resp.ok) {
-      const blob = await resp.blob();
-      const base64Data = await new Promise<string>((resolve) => {
+    const response = await fetch(logoUrl);
+    if (response.ok) {
+      const blob = await response.blob();
+      const base64Data = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve((reader.result as string).split(',')[1]);
+        reader.onloadend = () => {
+          const base64 = (reader.result as string).split(',')[1];
+          resolve(base64);
+        };
+        reader.onerror = reject;
         reader.readAsDataURL(blob);
       });
-      
-      referencePart = {
+
+      parts.push({
         inlineData: {
           data: base64Data,
-          mimeType: blob.type || 'image/jpeg'
+          mimeType: blob.type || 'image/png'
         }
-      };
+      });
     }
-  } catch (e) {
-    console.warn("Logo preview bypass active.");
+  } catch (error) {
+    console.warn("Reference logo could not be loaded, using text prompt only.", error);
   }
 
-  const textPart = {
-    text: `STUNNING CINEMATIC 4K MASTERPIECE. 
-    CHARACTER: Kyogre (legendary sapphire blue sea Pokémon with red glowing lines).
-    SCENE: ${prompt}.
-    VIBE: Epic, high-power, oceanic authority. Professional digital art.`
-  };
+  // Add the text prompt for image generation
+  parts.push({
+    text: `Create a professional, high-quality, cinematic 4K digital art piece featuring Kyogre (the legendary blue whale-like sea Pokémon). 
+    Scenario: ${prompt}. 
+    Details: Vibrant blue skin, glowing red circuitry patterns, majestic oceanic environment, epic lighting, 1K resolution.`
+  });
 
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
-      contents: { 
-        parts: referencePart ? [referencePart, textPart] : [textPart] 
-      },
+      contents: { parts },
       config: {
         imageConfig: {
           aspectRatio: "1:1"
@@ -61,24 +56,26 @@ export async function generateKyogreMeme(prompt: string, logoUrl: string) {
       }
     });
 
-    // Kép keresése a válaszban
+    // Extract the image from the response parts as per SDK rules
     if (response.candidates?.[0]?.content?.parts) {
       for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData?.data) {
+        if (part.inlineData) {
           return `data:image/png;base64,${part.inlineData.data}`;
         }
       }
     }
 
-    throw new Error("A tenger mélye nem adott választ. Próbáld újra.");
+    throw new Error("The depths of the ocean returned no imagery. Try a different command.");
   } catch (error: any) {
-    console.error("Gemini Error Detail:", error);
+    console.error("Gemini API error:", error);
     
-    // Specifikus SDK hiba kezelés
-    if (error.message?.includes("API key") || error.message?.includes("set when running")) {
-      throw new Error("API CSATLAKOZÁSI HIBA: A böngésző nem látja a kulcsot. Ellenőrizd a beállításokat!");
+    // Pass through specific error messages for better debugging in the UI
+    const errorMessage = error.message || "An unexpected error occurred during generation.";
+    
+    if (errorMessage.includes("API key")) {
+      throw new Error("API KEY ERROR: Ensure the API_KEY is correctly set in your environment variables.");
     }
     
-    throw new Error(error.message || "Ismeretlen hiba a generálás közben.");
+    throw new Error(errorMessage);
   }
 }
