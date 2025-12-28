@@ -1,45 +1,54 @@
 
 import { GoogleGenAI } from "@google/genai";
 
+/**
+ * Kiváló minőségű Kyogre képet generál a Gemini 3 Pro Image modellel.
+ */
 export async function generateKyogreMeme(userPrompt: string): Promise<string> {
-  // A kulcsot közvetlenül a process.env-ből olvassuk ki a hívás pillanatában
-  const key = process.env.API_KEY;
-  
-  if (!key) {
-    throw new Error("HIÁNYZÓ API KULCS: Kérlek ellenőrizd a Vercel Environment Variables beállításait (API_KEY).");
-  }
+  // Mindig friss példányt hozunk létre, hogy az éppen aktuális kulcsot használja
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+  const kyogreVisuals = `Kyogre, the legendary massive blue whale Pokémon. 
+    Appearance: Sapphire-blue skin, white underbelly, enormous pectoral fins with four square fingers. 
+    Special detail: Glowing red circuitry/lines along its body and fins. 
+    Style: Epic cinematic digital art, 4K resolution, dramatic oceanic lighting.`;
 
   try {
-    const ai = new GoogleGenAI({ apiKey: key });
-    
-    // Kyogre pontos vizuális definíciója, hogy ne legyen félreértés a modellnél
-    const kyogreIdentity = "Kyogre, the legendary massive blue whale Pokémon with white belly and glowing red circuitry patterns on its huge pectoral fins. Small golden eyes.";
-    
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image',
+      model: 'gemini-3-pro-image-preview',
       contents: {
         parts: [
           {
-            text: `Professional 4K cinematic digital art of ${kyogreIdentity}. Scenario: ${userPrompt}. Masterpiece, high detail, epic oceanic atmosphere.`
+            text: `${kyogreVisuals} Scenario: ${userPrompt}. Masterpiece quality, bioluminescent glow, photorealistic water effects.`
           }
         ]
       },
       config: {
         imageConfig: {
-          aspectRatio: "1:1"
+          aspectRatio: "1:1",
+          imageSize: "1K"
         }
       }
     });
 
-    // Kép kinyerése a válaszból a hivatalos SDK szabályok szerint
-    const part = response.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
-    if (part?.inlineData?.data) {
-      return `data:image/png;base64,${part.inlineData.data}`;
+    // Végigmegyünk az összes részen, hogy megtaláljuk a képet (SDK szabály)
+    if (response.candidates?.[0]?.content?.parts) {
+      for (const part of response.candidates[0].content.parts) {
+        if (part.inlineData) {
+          return `data:image/png;base64,${part.inlineData.data}`;
+        }
+      }
     }
 
-    throw new Error("A modell nem küldött kép adatot. Próbálkozz más szöveggel.");
+    throw new Error("A tenger mélye üres választ küldött. Próbálkozz más szöveggel.");
   } catch (error: any) {
-    console.error("Gemini Error:", error);
-    throw new Error(error.message || "Hiba történt a generálás során.");
+    console.error("Gemini 3 Pro Error:", error);
+    
+    // Specifikus hibaüzenet a kulcsra
+    if (error.message?.includes("entity was not found") || error.message?.includes("API key")) {
+      throw new Error("AUTH_REQUIRED: Kérlek kattints az 'AUTHORIZE' gombra a kulcs aktiválásához.");
+    }
+    
+    throw new Error(error.message || "Ismeretlen hiba a generálás során.");
   }
 }
