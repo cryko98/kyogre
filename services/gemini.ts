@@ -5,20 +5,16 @@ import { GoogleGenAI } from "@google/genai";
  * Generates a Kyogre-themed meme using the Gemini 2.5 Flash Image model.
  */
 export async function generateKyogreMeme(prompt: string, logoUrl: string) {
-  // Always obtain the API key exclusively from process.env.API_KEY
-  const apiKey = process.env.API_KEY;
-  
-  if (!apiKey || apiKey.trim() === "") {
-    throw new Error("API_KEY environment variable is not set. Please add it to your environment variables.");
-  }
+  // Mindig a process.env.API_KEY-t használjuk az inicializáláshoz
+  const ai = new GoogleGenAI({ 
+    apiKey: process.env.API_KEY || "" 
+  });
 
-  const ai = new GoogleGenAI({ apiKey });
-
-  // Attempt to fetch the logo for image-to-image reference
+  // Logó betöltése kép-alapú generáláshoz
   let referencePart: any = null;
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 8000); 
     const resp = await fetch(logoUrl, { signal: controller.signal });
     clearTimeout(timeoutId);
 
@@ -42,16 +38,16 @@ export async function generateKyogreMeme(prompt: string, logoUrl: string) {
       };
     }
   } catch (e) {
-    console.warn("Logo reference failed (CORS or Network). Falling back to text-only generation.", e);
+    console.warn("Logó betöltése sikertelen, csak szöveges promptot használunk.");
   }
 
   const textPart = {
-    text: `GENERATE A HIGH-QUALITY, VIBRANT, FULL-COLOR CINEMATIC MEME.
-    CHARACTER: Kyogre (The Blue Legendary Whale Pokémon).
-    DESCRIPTION: Deep blue body, glowing red circuitry patterns, white eye spots. 
+    text: `GENERATE A STUNNING, FULL-COLOR, 4K RESOLUTION CINEMATIC IMAGE.
+    CHARACTER: Kyogre (a legendás kék bálna-szerű Pokémon).
+    APPEARANCE: Élénk kék test, világító piros mintákkal, fehér foltokkal a szemeinél. 
     SCENE: ${prompt}.
-    VISUALS: Majestic, powerful, deep-sea bioluminescence, 4K detail, vibrant colors.
-    MUST: Ensure Kyogre looks exactly like the character in the reference logo if provided.`
+    ATMOSPHERE: Fenséges, erőteljes, víz alatti epikus látvány.
+    NOTE: Nagy részletesség, professzionális minőség, ne legyen fekete-fehér.`
   };
 
   try {
@@ -75,12 +71,13 @@ export async function generateKyogreMeme(prompt: string, logoUrl: string) {
       }
     }
 
-    throw new Error("Generation completed but no image was found in the response.");
+    throw new Error("A tenger mélye nem küldött vissza képet. Próbálkozz más szöveggel.");
   } catch (error: any) {
-    console.error("Gemini Image Generation Error:", error);
+    console.error("Gemini Hiba:", error);
     
-    if (error.message?.includes("API key")) {
-      throw new Error("The API key provided is invalid or has expired. Verify the key in your project settings.");
+    const errMsg = error.message?.toLowerCase() || "";
+    if (errMsg.includes("api key") || errMsg.includes("403") || errMsg.includes("invalid")) {
+      throw new Error("API Kulcs Hiba: Ellenőrizd, hogy az API_KEY környezeti változó megfelelően van-e beállítva a Vercel-ben vagy a helyi környezetben.");
     }
     
     throw error;
