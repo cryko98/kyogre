@@ -8,23 +8,6 @@
     <link rel="icon" type="image/jpeg" href="https://pbs.twimg.com/media/G9RaZv9WIAAUAcb?format=jpg&name=medium" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <script>
-      /** 
-       * Safe Shim for process.env 
-       * Biztosítja, hogy a kód bárhonnan megtalálja az API kulcsot.
-       */
-      window.process = window.process || {};
-      window.process.env = window.process.env || {};
-      
-      // Ha a process.env.API_KEY üres, megpróbáljuk kinyerni más lehetséges helyekről
-      if (!window.process.env.API_KEY) {
-        window.process.env.API_KEY = window.VITE_API_KEY || window.API_KEY || "";
-      }
-      
-      if (!window.process.env.NODE_ENV) {
-        window.process.env.NODE_ENV = 'production';
-      }
-    </script>
     <style>
       body {
         font-family: 'Poppins', sans-serif;
