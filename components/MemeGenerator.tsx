@@ -18,7 +18,8 @@ const MemeGenerator: React.FC = () => {
     setResult(null);
     
     try {
-      const imageUrl = await generateKyogreMeme(finalPrompt, CONFIG.LOGO_URL);
+      // Removed CONFIG.LOGO_URL as it is no longer used for reference
+      const imageUrl = await generateKyogreMeme(finalPrompt);
       setResult(imageUrl);
     } catch (err: any) {
       console.error("Generator component caught error:", err);
