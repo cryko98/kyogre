@@ -2,27 +2,32 @@
 import { GoogleGenAI } from "@google/genai";
 
 /**
- * Generates a Kyogre-themed image using the Gemini 2.5 Flash Image model.
- * Adheres strictly to the @google/genai SDK guidelines.
- * Now uses a detailed textual description instead of a logo reference.
+ * Generates an epic Kyogre-themed image.
+ * Uses gemini-2.5-flash-image as per the latest standards.
  */
-export async function generateKyogreMeme(prompt: string) {
-  // Initialize the GenAI client with the mandatory environment variable.
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+export async function generateKyogreMeme(userPrompt: string) {
+  // Ensure the API key is accessible from the environment
+  const apiKey = process.env.API_KEY;
+  
+  if (!apiKey) {
+    throw new Error("API_KEY is missing from the environment. Please check your Vercel/System variables.");
+  }
 
-  // Detailed description of Kyogre to ensure the model understands the subject
-  const kyogreDescription = `Kyogre is a massive, legendary blue whale-like Pokémon. 
-    It has a deep sapphire-blue body with a white underbelly. 
-    Its most striking features are the glowing red circuitry-like patterns running across its back and its two enormous pectoral fins. 
-    Each fin has four large, square-shaped fingers with red markings. 
-    It has golden eyes and two small white oval spots located just above its eyes. 
-    Its tail is small with jagged, fringe-like edges.`;
+  // Initialize strictly according to SDK guidelines
+  const ai = new GoogleGenAI({ apiKey });
+
+  // Comprehensive visual description of Kyogre for the model
+  const kyogreDescription = `Subject: Kyogre, the legendary Sea Basin Pokémon. 
+    Appearance: A massive, majestic sapphire-blue whale-like creature with a white underbelly. 
+    Key Features: Large pectoral fins with four square-shaped fingers, bioluminescent glowing red circuitry patterns along its sides and fins. 
+    Eyes: Small golden eyes with white oval spots above them. 
+    Texture: Smooth, glistening sapphire skin reflecting deep-sea light.`;
 
   const textPart = {
-    text: `Task: Generate a professional, high-definition 4K cinematic digital art piece.
-    Subject: ${kyogreDescription}
-    Scenario: ${prompt}.
-    Artistic Style: Epic scale, realistic textures (glistening wet skin, bioluminescent red glow), dynamic oceanic lighting, masterwork quality.`
+    text: `TASK: Generate a professional 4K cinematic digital illustration.
+    SUBJECT DETAILS: ${kyogreDescription}
+    SCENE COMMAND: ${userPrompt}.
+    ART STYLE: Dramatic, epic scale, bioluminescent lighting, dynamic water particles, ultra-realistic textures, masterpiece quality.`
   };
 
   try {
@@ -36,7 +41,7 @@ export async function generateKyogreMeme(prompt: string) {
       }
     });
 
-    // Extract the image from the response parts as per SDK rules
+    // Iterate through parts to find the image data as per SDK rules
     if (response.candidates?.[0]?.content?.parts) {
       for (const part of response.candidates[0].content.parts) {
         if (part.inlineData) {
@@ -45,16 +50,15 @@ export async function generateKyogreMeme(prompt: string) {
       }
     }
 
-    throw new Error("The depths of the ocean returned no imagery. Try a different command.");
+    throw new Error("The abyss returned an empty response. Try a different prompt.");
   } catch (error: any) {
-    console.error("Gemini API error:", error);
+    console.error("Generator Service Error:", error);
     
-    const errorMessage = error.message || "An unexpected error occurred during generation.";
-    
-    if (errorMessage.includes("API key")) {
-      throw new Error("API KEY ERROR: Ensure the API_KEY is correctly set in your environment variables.");
+    // Friendly error messages for common API issues
+    if (error.message?.includes("API key")) {
+      throw new Error("AUTHENTICATION ERROR: The Sea King does not recognize your credentials. Check API_KEY.");
     }
     
-    throw new Error(errorMessage);
+    throw new Error(error.message || "A tidal wave disrupted the generation. Please try again.");
   }
 }

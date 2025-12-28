@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { generateKyogreMeme } from '../services/gemini';
 import { CONFIG, RANDOM_PROMPTS } from '../constants';
 
@@ -8,6 +8,29 @@ const MemeGenerator: React.FC = () => {
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<string>('');
+
+  const statusMessages = [
+    "DESCENDING TO THE ABYSS...",
+    "CHANNELING PRIMAL ENERGY...",
+    "CALCULATING TECTONIC SHIFTS...",
+    "FORGING OCEANIC VISUALS...",
+    "STABILIZING THE SINGULARITY...",
+    "EMERGING FROM THE DEPTHS..."
+  ];
+
+  useEffect(() => {
+    let interval: any;
+    if (loading) {
+      let i = 0;
+      setStatus(statusMessages[0]);
+      interval = setInterval(() => {
+        i = (i + 1) % statusMessages.length;
+        setStatus(statusMessages[i]);
+      }, 2000);
+    }
+    return () => clearInterval(interval);
+  }, [loading]);
 
   const handleGenerate = async (customPrompt?: string) => {
     const finalPrompt = customPrompt || prompt;
@@ -18,12 +41,11 @@ const MemeGenerator: React.FC = () => {
     setResult(null);
     
     try {
-      // Removed CONFIG.LOGO_URL as it is no longer used for reference
       const imageUrl = await generateKyogreMeme(finalPrompt);
       setResult(imageUrl);
     } catch (err: any) {
-      console.error("Generator component caught error:", err);
-      setError(err.message || "Something went wrong in the deep sea. Try again.");
+      console.error("MemeForge Error:", err);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -36,91 +58,116 @@ const MemeGenerator: React.FC = () => {
   };
 
   return (
-    <section id="meme" className="py-24 bg-black relative overflow-hidden">
+    <section id="meme" className="py-24 bg-black relative">
+      {/* Background Decorative Element */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-30"></div>
+      
       <div className="container mx-auto px-4 relative z-10">
-        <h2 className="text-4xl md:text-6xl font-black text-center mb-4 uppercase tracking-tighter">
-          DEEP SEA <span className="text-red-600">MEME FORGE</span>
-        </h2>
-        <p className="text-center text-slate-500 mb-12 max-w-2xl mx-auto uppercase text-xs tracking-widest font-bold">
-          The King obeys your commands. Type a prompt or use the randomizer.
-        </p>
-
-        <div className="max-w-4xl mx-auto bg-slate-950 p-6 md:p-8 border border-red-900/30 shadow-[0_0_40px_rgba(239,68,68,0.1)]">
-          <div className="flex flex-col md:flex-row gap-2 mb-8">
-            <input 
-              type="text"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="E.g. Kyogre rules the throne of Mars..."
-              className="flex-1 bg-black border border-red-900/30 px-6 py-4 focus:border-red-600 outline-none text-white transition-all text-sm tracking-wide"
-            />
-            <div className="flex gap-2">
-              <button 
-                onClick={() => handleGenerate()}
-                disabled={loading}
-                className="bg-red-600 hover:bg-red-700 disabled:bg-slate-900 text-white px-8 py-4 font-black transition-all flex items-center justify-center min-w-[120px] uppercase tracking-widest text-sm"
-              >
-                {loading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>FORGING...</span>
-                  </div>
-                ) : 'GENERATE'}
-              </button>
-              <button 
-                onClick={handleRandom}
-                disabled={loading}
-                className="bg-white hover:bg-red-600 text-black hover:text-white px-6 py-4 transition-all flex items-center justify-center"
-                title="Random Meme"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-              </button>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-5xl md:text-7xl font-black mb-4 tracking-tighter uppercase italic">
+              DEEP SEA <span className="text-red-600">FORGE</span>
+            </h2>
+            <div className="flex items-center justify-center gap-4">
+              <div className="h-[1px] w-12 bg-red-900"></div>
+              <p className="text-slate-500 uppercase text-[10px] tracking-[0.5em] font-bold">Protocol v2.5 Stable</p>
+              <div className="h-[1px] w-12 bg-red-900"></div>
             </div>
           </div>
 
-          <div className="min-h-[350px] md:min-h-[500px] flex flex-col items-center justify-center border border-red-900/20 bg-black relative rounded-sm overflow-hidden">
-            {loading ? (
-              <div className="text-center space-y-4 p-8">
-                <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <p className="font-special text-red-600 animate-pulse uppercase tracking-[0.3em] text-xs">SUMMONING THE KING FROM THE DEPTHS</p>
-                <p className="text-slate-600 text-[10px] uppercase tracking-widest">Generating high-quality image data...</p>
+          <div className="grid lg:grid-cols-12 gap-8 items-start">
+            {/* Input Panel */}
+            <div className="lg:col-span-5 space-y-6">
+              <div className="bg-slate-950 p-6 border border-red-900/30 shadow-2xl">
+                <label className="block text-[10px] uppercase font-black tracking-widest text-red-600 mb-4">Command Input</label>
+                <textarea 
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  placeholder="Describe your vision for the King..."
+                  className="w-full h-32 bg-black border border-red-900/20 p-4 focus:border-red-600 outline-none text-white transition-all text-sm font-mono resize-none"
+                />
+                
+                <div className="grid grid-cols-2 gap-3 mt-6">
+                  <button 
+                    onClick={() => handleGenerate()}
+                    disabled={loading || !prompt.trim()}
+                    className="col-span-1 bg-red-600 hover:bg-red-700 disabled:bg-slate-900 text-white font-black py-4 transition-all uppercase tracking-tighter text-sm flex items-center justify-center gap-2"
+                  >
+                    {loading ? "PROCESS..." : "EXECUTE"}
+                  </button>
+                  <button 
+                    onClick={handleRandom}
+                    disabled={loading}
+                    className="col-span-1 bg-white hover:bg-red-500 text-black hover:text-white font-black py-4 transition-all uppercase tracking-tighter text-sm"
+                  >
+                    RANDOMIZE
+                  </button>
+                </div>
               </div>
-            ) : result ? (
-              <div className="w-full h-full relative group">
-                <img src={result} alt="Generated Kyogre Meme" className="w-full h-full object-contain p-2" />
-                <button 
-                  onClick={() => {
-                    const link = document.createElement('a');
-                    link.href = result;
-                    link.download = `kyogre-meme-${Date.now()}.png`;
-                    link.click();
-                  }}
-                  className="absolute bottom-4 right-4 bg-red-600 hover:bg-red-700 p-3 text-white transition-all shadow-xl rounded-full scale-0 group-hover:scale-100 duration-300"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12 a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                </button>
+
+              {/* Console Output */}
+              <div className="bg-black border border-slate-900 p-4 font-mono text-[10px] text-slate-500 uppercase h-40 overflow-hidden relative">
+                <div className="space-y-1">
+                  <div className="text-green-900">&gt; INITIALIZING KYOGRE_META_ENGINE...</div>
+                  <div className="text-green-900">&gt; ENVIRONMENT_VAR: {process.env.API_KEY ? "DETECTED" : "NULL"}</div>
+                  <div className="text-green-900">&gt; SEEDED PROMPT DESCRIPTION LOADED</div>
+                  {loading && <div className="text-red-600 animate-pulse">&gt; STATUS: {status}</div>}
+                  {error && <div className="text-red-500">&gt; ERROR: {error}</div>}
+                  {result && <div className="text-blue-500">&gt; SUCCESS: ASSET_RENDERED_OK</div>}
+                  {!loading && !result && !error && <div className="animate-pulse">&gt; WAITING_FOR_USER_INPUT...</div>}
+                </div>
+                <div className="absolute bottom-2 right-2 text-[8px] opacity-20">SYSTEM_CORE_44.0</div>
               </div>
-            ) : error ? (
-              <div className="text-center p-8">
-                <div className="text-red-500 font-black uppercase text-sm mb-4 tracking-widest">⚠️ ERROR DETECTED</div>
-                <div className="text-slate-400 text-xs max-w-sm mx-auto leading-relaxed">{error}</div>
-                <button 
-                  onClick={() => handleGenerate()} 
-                  className="mt-6 text-red-600 underline text-[10px] uppercase font-bold tracking-widest hover:text-white"
-                >
-                  RETRY PROTOCOL
-                </button>
+            </div>
+
+            {/* Preview Panel */}
+            <div className="lg:col-span-7">
+              <div className="relative aspect-square bg-slate-950 border border-red-900/40 overflow-hidden flex items-center justify-center shadow-[0_0_60px_rgba(239,68,68,0.05)]">
+                {loading ? (
+                  <div className="text-center z-20">
+                    <div className="w-20 h-20 border-t-4 border-red-600 border-r-4 border-r-transparent rounded-full animate-spin mx-auto mb-6"></div>
+                    <p className="font-special text-red-600 uppercase tracking-[0.4em] text-xs animate-pulse">{status}</p>
+                  </div>
+                ) : result ? (
+                  <div className="w-full h-full relative group">
+                    <img src={result} alt="Generated Kyogre Art" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-8">
+                       <button 
+                        onClick={() => {
+                          const link = document.createElement('a');
+                          link.href = result;
+                          link.download = `kyogre-${Date.now()}.png`;
+                          link.click();
+                        }}
+                        className="bg-red-600 hover:bg-white hover:text-black text-white px-6 py-3 font-black text-xs uppercase tracking-widest transition-all shadow-2xl"
+                      >
+                        DOWNLOAD ARTIFACT
+                      </button>
+                    </div>
+                  </div>
+                ) : error ? (
+                  <div className="text-center p-12 max-w-sm">
+                    <div className="text-red-600 font-black text-4xl mb-4">!!</div>
+                    <p className="text-slate-400 text-xs font-mono uppercase leading-relaxed mb-6">{error}</p>
+                    <button 
+                      onClick={() => handleGenerate()} 
+                      className="text-red-600 underline text-[10px] font-black uppercase tracking-[0.2em] hover:text-white"
+                    >
+                      TRY_RE-SYNC_PROTOCOL
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-center p-12 opacity-30 select-none group">
+                    <img src={CONFIG.LOGO_URL} className="w-32 h-32 mx-auto mb-8 grayscale brightness-50 contrast-125 group-hover:grayscale-0 transition-all duration-500" alt="Ref" />
+                    <p className="uppercase font-black text-[10px] tracking-[0.6em]">Awaiting Creation</p>
+                  </div>
+                )}
+                
+                {/* Decorative corners */}
+                <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-red-600/30"></div>
+                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-red-600/30"></div>
               </div>
-            ) : (
-              <div className="text-slate-800 text-center p-10 select-none opacity-50">
-                <img src={CONFIG.LOGO_URL} alt="Logo Ref" className="w-24 h-24 mx-auto mb-6 grayscale brightness-50" />
-                <p className="uppercase font-black text-xs tracking-[0.4em]">Awaiting Command</p>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
