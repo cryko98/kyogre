@@ -1,12 +1,17 @@
+
 import { GoogleGenAI } from "@google/genai";
 
 /**
  * Generates a high-quality Kyogre meme image using the gemini-2.5-flash-image model.
- * Relies on the platform-provided process.env.API_KEY.
+ * Accepts a specific API key passed from the component.
  */
-export async function generateKyogreMeme(userPrompt: string): Promise<string> {
-  // Always initialize right before use to ensure the most current environment state is captured.
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+export async function generateKyogreMeme(userPrompt: string, apiKey: string): Promise<string> {
+  if (!apiKey) {
+    throw new Error("No API key provided. Please enter your Gemini API key below.");
+  }
+
+  // Initialize the API with the provided key
+  const ai = new GoogleGenAI({ apiKey });
 
   const kyogreDescription = "Kyogre, the legendary massive sapphire-blue whale Pokémon with a white belly and glowing red circuitry-like patterns on its huge pectoral fins.";
   
@@ -33,17 +38,16 @@ export async function generateKyogreMeme(userPrompt: string): Promise<string> {
       throw new Error("No response received from the Primal Engine.");
     }
 
-    // Iterate through parts to find the image data as per SDK guidelines for Flash Image models
+    // Iterate through parts to find the image data
     for (const part of candidate.content.parts) {
       if (part.inlineData?.data) {
         return `data:image/png;base64,${part.inlineData.data}`;
       }
     }
 
-    throw new Error("Image data was not found in the Primal Engine response.");
+    throw new Error("Image data was not found in the response.");
   } catch (error: any) {
-    console.error("Gemini Flash Image Error:", error);
-    // Provide the raw error message if it's an API issue (like invalid key) to help the user debug.
-    throw new Error(error.message || "The Summoning failed. Ensure your environment variables are correctly configured.");
+    console.error("Gemini Error:", error);
+    throw new Error(error.message || "Summoning failed. Check if your API key is valid.");
   }
 }
