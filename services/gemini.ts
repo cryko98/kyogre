@@ -2,38 +2,32 @@
 import { GoogleGenAI } from "@google/genai";
 
 /**
- * Generates an epic Kyogre-themed image.
- * Uses gemini-2.5-flash-image as per the latest standards.
+ * Generates an epic Kyogre-themed image using the Gemini 2.5 Flash Image model.
  */
 export async function generateKyogreMeme(userPrompt: string) {
-  // Ensure the API key is accessible from the environment
-  const apiKey = process.env.API_KEY;
-  
-  if (!apiKey) {
-    throw new Error("API_KEY is missing from the environment. Please check your Vercel/System variables.");
-  }
+  // Accessing the API key directly from the environment as required.
+  // Creating a new instance per-call ensures we always use the latest injected key.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-  // Initialize strictly according to SDK guidelines
-  const ai = new GoogleGenAI({ apiKey });
-
-  // Comprehensive visual description of Kyogre for the model
-  const kyogreDescription = `Subject: Kyogre, the legendary Sea Basin Pokémon. 
-    Appearance: A massive, majestic sapphire-blue whale-like creature with a white underbelly. 
-    Key Features: Large pectoral fins with four square-shaped fingers, bioluminescent glowing red circuitry patterns along its sides and fins. 
-    Eyes: Small golden eyes with white oval spots above them. 
-    Texture: Smooth, glistening sapphire skin reflecting deep-sea light.`;
-
-  const textPart = {
-    text: `TASK: Generate a professional 4K cinematic digital illustration.
-    SUBJECT DETAILS: ${kyogreDescription}
-    SCENE COMMAND: ${userPrompt}.
-    ART STYLE: Dramatic, epic scale, bioluminescent lighting, dynamic water particles, ultra-realistic textures, masterpiece quality.`
-  };
+  // Detailed physical description to ensure the model produces a correct Kyogre.
+  const kyogreVisuals = `Subject: Kyogre, the legendary Sea Basin Pokémon. 
+    Description: A massive, sapphire-blue whale-like entity with a white underbelly. 
+    Details: Bioluminescent glowing red circuitry-like lines running across its body and its two enormous pectoral fins. Four square-shaped fingers on each fin. 
+    Eyes: Golden eyes with white oval spots above them.`;
 
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
-      contents: { parts: [textPart] },
+      contents: {
+        parts: [
+          {
+            text: `Create a professional 4K cinematic digital illustration.
+            ${kyogreVisuals}
+            Scenario: ${userPrompt}.
+            Style: Epic oceanic lighting, dynamic water splashes, bioluminescent red glow, masterpiece quality.`
+          }
+        ]
+      },
       config: {
         imageConfig: {
           aspectRatio: "1:1"
@@ -41,7 +35,7 @@ export async function generateKyogreMeme(userPrompt: string) {
       }
     });
 
-    // Iterate through parts to find the image data as per SDK rules
+    // Extracting the image from the response parts according to SDK rules.
     if (response.candidates?.[0]?.content?.parts) {
       for (const part of response.candidates[0].content.parts) {
         if (part.inlineData) {
@@ -50,15 +44,15 @@ export async function generateKyogreMeme(userPrompt: string) {
       }
     }
 
-    throw new Error("The abyss returned an empty response. Try a different prompt.");
+    throw new Error("The depths of the sea returned no imagery. Try a different command.");
   } catch (error: any) {
-    console.error("Generator Service Error:", error);
+    console.error("Gemini Generation Error:", error);
     
-    // Friendly error messages for common API issues
+    // Check for common issues
     if (error.message?.includes("API key")) {
       throw new Error("AUTHENTICATION ERROR: The Sea King does not recognize your credentials. Check API_KEY.");
     }
     
-    throw new Error(error.message || "A tidal wave disrupted the generation. Please try again.");
+    throw new Error(error.message || "A rogue tidal wave disrupted the generation. Please try again.");
   }
 }
