@@ -3,20 +3,21 @@ import { GoogleGenAI } from "@google/genai";
 
 export async function generateKyogreMeme(prompt: string, logoUrl: string) {
   try {
-    // Create instance inside the function as per guidelines to avoid stale closures
-    // and ensure it uses the latest environment state.
-    const apiKey = process.env.API_KEY || '';
+    // Obtain API key exclusively from process.env.API_KEY as per instructions
+    const apiKey = process.env.API_KEY;
+    
     if (!apiKey) {
-      console.warn("API_KEY is missing from process.env. Generation may fail.");
+      throw new Error("API key is missing. Ensure 'API_KEY' is set in your environment variables.");
     }
     
+    // Initialize the client right before usage
     const ai = new GoogleGenAI({ apiKey });
 
     // Resilient fetch for the reference image (Logo)
     let referencePart: any = null;
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout
+      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
       const resp = await fetch(logoUrl, { signal: controller.signal });
       clearTimeout(timeoutId);
 
@@ -27,7 +28,11 @@ export async function generateKyogreMeme(prompt: string, logoUrl: string) {
           reader.onload = () => {
             const result = reader.result as string;
             // Extract pure base64 data
-            resolve(result.split(',')[1]);
+            if (result.includes(',')) {
+              resolve(result.split(',')[1]);
+            } else {
+              resolve(result);
+            }
           };
           reader.onerror = reject;
           reader.readAsDataURL(blob);
@@ -41,24 +46,24 @@ export async function generateKyogreMeme(prompt: string, logoUrl: string) {
         };
       }
     } catch (e) {
-      console.warn("Logo reference fetch failed or timed out. Generating based on text prompt alone.", e);
+      console.warn("Logo reference fetch failed or timed out. Falling back to text-only description.", e);
     }
 
     const textPart = {
-      text: `Generate a high-resolution, VIBRANT, FULL-COLOR cinematic meme image.
-      CHARACTER: Kyogre (Legendary Sea Basin Pokémon).
-      KYOGRE DETAILS: A giant blue whale-like sea creature with distinct red line patterns on its body and glowing eyes.
-      PROMPT SCENE: ${prompt}
-      STYLIZATION: Dynamic oceanic environment, epic lighting, 4K detail. 
-      CRITICAL: Absolutely NO grayscale or black-and-white. Use rich blues, reds, and bioluminescent effects.`
+      text: `Create a cinematic, high-quality, VIBRANT, FULL-COLOR meme image.
+      CHARACTER: Kyogre (The legendary blue whale-like Pokémon from the logo reference).
+      DESCRIPTION: Blue skin, glowing red lines/patterns, white spots.
+      SCENE: ${prompt}
+      LIGHTING: Dramatic deep sea bioluminescence, epic cinematic feel.
+      QUALITY: 4K, detailed, no grayscale, no black and white. Use intense colors.`
     };
 
-    // The Gemini 2.5 Flash Image model works best with a combination of image reference and text.
-    const parts = referencePart ? [referencePart, textPart] : [textPart];
-
+    // Use gemini-2.5-flash-image as the default image generation model
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
-      contents: { parts },
+      contents: { 
+        parts: referencePart ? [referencePart, textPart] : [textPart] 
+      },
       config: {
         imageConfig: {
           aspectRatio: "1:1"
@@ -67,23 +72,25 @@ export async function generateKyogreMeme(prompt: string, logoUrl: string) {
     });
 
     if (!response.candidates?.[0]?.content?.parts) {
-      throw new Error("Empty response from AI model.");
+      throw new Error("AI returned an empty response. Please try a different prompt.");
     }
 
-    // Find the image part in the response
+    // Find and return the image data
     for (const part of response.candidates[0].content.parts) {
       if (part.inlineData?.data) {
         return `data:image/png;base64,${part.inlineData.data}`;
       }
     }
 
-    throw new Error("The AI model returned text but no image data.");
+    throw new Error("The AI generated text but failed to produce an image. Please try again.");
   } catch (error: any) {
     console.error("Meme Generation Error:", error);
-    // Provide more specific feedback for common errors
+    
+    // Handle standard API errors
     if (error.message?.includes("API_KEY")) {
-      throw new Error("API Key is missing or invalid. Check your Vercel environment variables.");
+      throw new Error("The API key is missing or invalid. Please check your deployment settings.");
     }
+    
     throw error;
   }
 }

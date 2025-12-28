@@ -9,13 +9,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script>
-      // Shim process.env for browser compatibility before any modules load
-      window.process = { 
-        env: { 
-          NODE_ENV: 'production'
-        } 
-      };
-      // Note: API_KEY is injected into process.env at runtime by the environment
+      /** 
+       * Safe Shim for process.env 
+       * This ensures process.env exists without wiping out keys (like API_KEY) 
+       * that might have been injected by the hosting environment.
+       */
+      window.process = window.process || {};
+      window.process.env = window.process.env || {};
+      if (!window.process.env.NODE_ENV) {
+        window.process.env.NODE_ENV = 'production';
+      }
     </script>
     <style>
       body {
