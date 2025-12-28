@@ -21,7 +21,8 @@ const MemeGenerator: React.FC = () => {
       const imageUrl = await generateKyogreMeme(finalPrompt);
       setResult(imageUrl);
     } catch (err: any) {
-      setError(err.message);
+      console.error("Forge Error:", err);
+      setError(err.message || "An unexpected error occurred in the abyss.");
     } finally {
       setLoading(false);
     }
@@ -41,23 +42,23 @@ const MemeGenerator: React.FC = () => {
             KYOGRE <span className="text-red-600">PRIMAL</span> FORGE
           </h2>
           <p className="text-slate-500 text-[10px] tracking-[0.4em] uppercase mb-12">
-            AI Meme Engine with Visual DNA
+            AI Meme Engine • Powered by Gemini 2.5 Flash
           </p>
           
-          <div className="bg-slate-950 p-6 md:p-10 border border-red-900/30 shadow-2xl mb-10">
+          <div className="bg-slate-950 p-6 md:p-10 border border-red-900/30 shadow-2xl mb-10 relative overflow-hidden">
             <div className="flex flex-col md:flex-row gap-4 mb-8">
               <input 
                 type="text"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Ex: Kyogre wearing a crown sitting on a throne of SOL..."
+                placeholder="Ex: Kyogre rising from a pool of lava with Solana logos..."
                 className="flex-1 bg-black border border-red-900/40 p-4 text-white outline-none focus:border-red-600 font-mono text-sm"
               />
               <div className="flex gap-2">
                 <button 
                   onClick={() => startGeneration()}
                   disabled={loading}
-                  className="bg-red-600 hover:bg-red-700 disabled:bg-gray-800 text-white font-black px-8 py-4 uppercase tracking-tighter transition-all whitespace-nowrap"
+                  className="bg-red-600 hover:bg-red-700 disabled:opacity-40 text-white font-black px-8 py-4 uppercase tracking-tighter transition-all whitespace-nowrap"
                 >
                   {loading ? 'FORGING...' : 'GENERATE'}
                 </button>
@@ -76,7 +77,7 @@ const MemeGenerator: React.FC = () => {
               {loading ? (
                 <div className="text-center z-10">
                   <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                  <p className="text-red-500 font-black text-xs uppercase tracking-widest animate-pulse">Summoning the King...</p>
+                  <p className="text-red-500 font-black text-xs uppercase tracking-widest animate-pulse">Consulting the Deep...</p>
                 </div>
               ) : result ? (
                 <div className="w-full h-full relative">
@@ -92,12 +93,14 @@ const MemeGenerator: React.FC = () => {
               ) : error ? (
                 <div className="p-10 text-center">
                   <div className="text-red-600 font-black text-xl mb-4 uppercase tracking-tighter italic">FORGE OFFLINE</div>
-                  <p className="text-slate-500 text-[11px] uppercase font-mono leading-relaxed max-w-xs mx-auto">{error}</p>
+                  <p className="text-slate-500 text-[11px] uppercase font-mono leading-relaxed max-w-xs mx-auto">
+                    {error.includes("API key") ? "The Primal Vault is locked. Ensure the API_KEY environment variable is correctly set." : error}
+                  </p>
                 </div>
               ) : (
                 <div className="text-center opacity-20 group-hover:opacity-40 transition-opacity">
                   <img src={CONFIG.LOGO_URL} className="w-32 h-32 mx-auto mb-4 grayscale" alt="Reference Logo" />
-                  <p className="text-[10px] uppercase font-black tracking-[0.4em]">Primal DNA Detected • Standby</p>
+                  <p className="text-[10px] uppercase font-black tracking-[0.4em]">Visual DNA Ready • Standby</p>
                 </div>
               )}
             </div>
@@ -110,7 +113,7 @@ const MemeGenerator: React.FC = () => {
                  onClick={() => { setPrompt(p); startGeneration(p); }}
                  className="text-[9px] uppercase font-bold text-slate-700 hover:text-red-500 transition-colors border-b border-transparent hover:border-red-500 pb-1"
                >
-                 Idea {i+1}
+                 Scenario {i+1}
                </button>
              ))}
           </div>
