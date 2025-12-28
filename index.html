@@ -8,6 +8,23 @@
     <link rel="icon" type="image/jpeg" href="https://pbs.twimg.com/media/G9RaZv9WIAAUAcb?format=jpg&name=medium" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+      /**
+       * EMBERI NYELVEN: Ez a kód biztosítja, hogy a böngésző "lássa" az API kulcsodat, 
+       * amit a rendszer a háttérben injektál.
+       */
+      window.process = window.process || { env: {} };
+      
+      // Megpróbáljuk szinkronizálni a változókat, bárhol is legyenek
+      const syncEnv = () => {
+        if (window.API_KEY && !window.process.env.API_KEY) window.process.env.API_KEY = window.API_KEY;
+        if (window.VITE_API_KEY && !window.process.env.API_KEY) window.process.env.API_KEY = window.VITE_API_KEY;
+      };
+      
+      syncEnv();
+      // Figyeljük, ha később érkezne meg a kulcs
+      window.addEventListener('load', syncEnv);
+    </script>
     <style>
       body {
         font-family: 'Poppins', sans-serif;
