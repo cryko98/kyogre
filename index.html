@@ -8,6 +8,10 @@
     <link rel="icon" type="image/jpeg" href="https://pbs.twimg.com/media/G9RaZv9WIAAUAcb?format=jpg&name=medium" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+      // Shim process.env for browser compatibility
+      window.process = window.process || { env: {} };
+    </script>
     <style>
       body {
         font-family: 'Poppins', sans-serif;
@@ -18,21 +22,12 @@
         font-family: 'Orbitron', sans-serif;
       }
       .bg-dark-red-gradient {
-        background: radial-gradient(circle at 50% 50%, #1a0000 0%, #000000 100%);
+        background: radial-gradient(circle at 50% 50%, #2a0505 0%, #000000 100%);
       }
       .glass-card {
         background: rgba(10, 0, 0, 0.8);
         backdrop-filter: blur(12px);
         border: 1px solid rgba(239, 68, 68, 0.2);
-      }
-      .text-accent {
-        color: #ef4444;
-      }
-      .border-accent {
-        border-color: #ef4444;
-      }
-      .bg-accent {
-        background-color: #ef4444;
       }
       .animate-float {
         animation: float 6s ease-in-out infinite;
