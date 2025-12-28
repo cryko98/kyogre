@@ -1,54 +1,49 @@
-
 import { GoogleGenAI } from "@google/genai";
 
 /**
- * Kiváló minőségű Kyogre képet generál a Gemini 3 Pro Image modellel.
+ * Generates a high-quality Kyogre meme image using the gemini-2.5-flash-image model.
+ * Relies on the platform-provided process.env.API_KEY.
  */
 export async function generateKyogreMeme(userPrompt: string): Promise<string> {
-  // Mindig friss példányt hozunk létre, hogy az éppen aktuális kulcsot használja
+  // Always initialize right before use to ensure the most current environment state is captured.
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-  const kyogreVisuals = `Kyogre, the legendary massive blue whale Pokémon. 
-    Appearance: Sapphire-blue skin, white underbelly, enormous pectoral fins with four square fingers. 
-    Special detail: Glowing red circuitry/lines along its body and fins. 
-    Style: Epic cinematic digital art, 4K resolution, dramatic oceanic lighting.`;
-
+  const kyogreDescription = "Kyogre, the legendary massive sapphire-blue whale Pokémon with a white belly and glowing red circuitry-like patterns on its huge pectoral fins.";
+  
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-image-preview',
+      model: 'gemini-2.5-flash-image',
       contents: {
         parts: [
           {
-            text: `${kyogreVisuals} Scenario: ${userPrompt}. Masterpiece quality, bioluminescent glow, photorealistic water effects.`
+            text: `Professional 4K digital painting of ${kyogreDescription}. Scenario: ${userPrompt}. Masterpiece, high detail, epic oceanic atmosphere, glowing bioluminescent effects.`
           }
         ]
       },
       config: {
         imageConfig: {
-          aspectRatio: "1:1",
-          imageSize: "1K"
+          aspectRatio: "1:1"
         }
       }
     });
 
-    // Végigmegyünk az összes részen, hogy megtaláljuk a képet (SDK szabály)
-    if (response.candidates?.[0]?.content?.parts) {
-      for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData) {
-          return `data:image/png;base64,${part.inlineData.data}`;
-        }
+    // Check if candidates and content parts exist
+    const candidate = response.candidates?.[0];
+    if (!candidate?.content?.parts) {
+      throw new Error("No response received from the Primal Engine.");
+    }
+
+    // Iterate through parts to find the image data as per SDK guidelines for Flash Image models
+    for (const part of candidate.content.parts) {
+      if (part.inlineData?.data) {
+        return `data:image/png;base64,${part.inlineData.data}`;
       }
     }
 
-    throw new Error("A tenger mélye üres választ küldött. Próbálkozz más szöveggel.");
+    throw new Error("Image data was not found in the Primal Engine response.");
   } catch (error: any) {
-    console.error("Gemini 3 Pro Error:", error);
-    
-    // Specifikus hibaüzenet a kulcsra
-    if (error.message?.includes("entity was not found") || error.message?.includes("API key")) {
-      throw new Error("AUTH_REQUIRED: Kérlek kattints az 'AUTHORIZE' gombra a kulcs aktiválásához.");
-    }
-    
-    throw new Error(error.message || "Ismeretlen hiba a generálás során.");
+    console.error("Gemini Flash Image Error:", error);
+    // Provide the raw error message if it's an API issue (like invalid key) to help the user debug.
+    throw new Error(error.message || "The Summoning failed. Ensure your environment variables are correctly configured.");
   }
 }
