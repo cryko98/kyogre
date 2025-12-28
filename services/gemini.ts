@@ -1,53 +1,64 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-// Initialize AI outside to be reused, but ensure it's safe
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-
 export async function generateKyogreMeme(prompt: string, logoUrl: string) {
   try {
-    let base64Data = '';
-    let hasInlineData = false;
+    // Create instance inside the function as per guidelines to avoid stale closures
+    // and ensure it uses the latest environment state.
+    const apiKey = process.env.API_KEY || '';
+    if (!apiKey) {
+      console.warn("API_KEY is missing from process.env. Generation may fail.");
+    }
+    
+    const ai = new GoogleGenAI({ apiKey });
 
+    // Resilient fetch for the reference image (Logo)
+    let referencePart: any = null;
     try {
-      const logoResponse = await fetch(logoUrl, { mode: 'no-cors' });
-      // Note: 'no-cors' won't allow us to read the blob, so we try regular fetch first
-      const regularFetch = await fetch(logoUrl).catch(() => null);
-      
-      if (regularFetch && regularFetch.ok) {
-        const logoBlob = await regularFetch.blob();
-        const logoBase64 = await new Promise<string>((resolve) => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout
+      const resp = await fetch(logoUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (resp.ok) {
+        const blob = await resp.blob();
+        const base64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result as string);
-          reader.readAsDataURL(logoBlob);
+          reader.onload = () => {
+            const result = reader.result as string;
+            // Extract pure base64 data
+            resolve(result.split(',')[1]);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
         });
-        base64Data = logoBase64.split(',')[1];
-        hasInlineData = true;
+        
+        referencePart = {
+          inlineData: {
+            data: base64,
+            mimeType: blob.type || 'image/jpeg'
+          }
+        };
       }
-    } catch (fetchError) {
-      console.warn("Could not fetch logo for reference due to CORS/Network. Falling back to text-only description.", fetchError);
+    } catch (e) {
+      console.warn("Logo reference fetch failed or timed out. Generating based on text prompt alone.", e);
     }
 
-    const contents: any = {
-      parts: []
+    const textPart = {
+      text: `Generate a high-resolution, VIBRANT, FULL-COLOR cinematic meme image.
+      CHARACTER: Kyogre (Legendary Sea Basin Pokémon).
+      KYOGRE DETAILS: A giant blue whale-like sea creature with distinct red line patterns on its body and glowing eyes.
+      PROMPT SCENE: ${prompt}
+      STYLIZATION: Dynamic oceanic environment, epic lighting, 4K detail. 
+      CRITICAL: Absolutely NO grayscale or black-and-white. Use rich blues, reds, and bioluminescent effects.`
     };
 
-    if (hasInlineData) {
-      contents.parts.push({
-        inlineData: {
-          data: base64Data,
-          mimeType: 'image/jpeg'
-        }
-      });
-    }
-
-    contents.parts.push({
-      text: `Create a cinematic, brutalist, and intense image of the character Kyogre (a legendary blue whale-like creature with red glowing patterns). ${hasInlineData ? 'The character MUST look exactly like the one in the provided reference logo.' : ''} THE AESTHETIC MUST BE VIBRANT IN THE DEEP SEA. The scene should be: ${prompt}. High contrast, dramatic deep sea lighting, legendary power, 2K resolution, modern meme art style.`
-    });
+    // The Gemini 2.5 Flash Image model works best with a combination of image reference and text.
+    const parts = referencePart ? [referencePart, textPart] : [textPart];
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
-      contents: contents,
+      contents: { parts },
       config: {
         imageConfig: {
           aspectRatio: "1:1"
@@ -55,17 +66,24 @@ export async function generateKyogreMeme(prompt: string, logoUrl: string) {
       }
     });
 
-    if (response.candidates?.[0]?.content?.parts) {
-      for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData) {
-          return `data:image/png;base64,${part.inlineData.data}`;
-        }
+    if (!response.candidates?.[0]?.content?.parts) {
+      throw new Error("Empty response from AI model.");
+    }
+
+    // Find the image part in the response
+    for (const part of response.candidates[0].content.parts) {
+      if (part.inlineData?.data) {
+        return `data:image/png;base64,${part.inlineData.data}`;
       }
     }
-    
-    throw new Error("No image data found in response");
-  } catch (error) {
-    console.error("Meme generation failed:", error);
+
+    throw new Error("The AI model returned text but no image data.");
+  } catch (error: any) {
+    console.error("Meme Generation Error:", error);
+    // Provide more specific feedback for common errors
+    if (error.message?.includes("API_KEY")) {
+      throw new Error("API Key is missing or invalid. Check your Vercel environment variables.");
+    }
     throw error;
   }
 }
