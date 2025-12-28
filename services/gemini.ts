@@ -1,30 +1,59 @@
 
 import { GoogleGenAI } from "@google/genai";
+import { CONFIG } from "../constants";
 
 /**
- * Generates a high-quality Kyogre meme image using the gemini-2.5-flash-image model.
- * Accepts a specific API key passed from the component.
+ * Segédfüggvény a logó letöltéséhez és base64 formátumra alakításához,
+ * hogy referencia képként elküldhessük a modellnek.
  */
-export async function generateKyogreMeme(userPrompt: string, apiKey: string): Promise<string> {
-  if (!apiKey) {
-    throw new Error("No API key provided. Please enter your Gemini API key below.");
+async function getLogoAsBase64(): Promise<{ data: string; mimeType: string }> {
+  try {
+    const response = await fetch(CONFIG.LOGO_URL);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64data = (reader.result as string).split(',')[1];
+        resolve({ data: base64data, mimeType: blob.type });
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.warn("Could not fetch reference logo, proceeding with text only.", error);
+    return { data: "", mimeType: "" };
   }
+}
 
-  // Initialize the API with the provided key
-  const ai = new GoogleGenAI({ apiKey });
-
-  const kyogreDescription = "Kyogre, the legendary massive sapphire-blue whale Pokémon with a white belly and glowing red circuitry-like patterns on its huge pectoral fins.";
+/**
+ * Generates a Kyogre meme using the project logo as a visual reference.
+ */
+export async function generateKyogreMeme(userPrompt: string): Promise<string> {
+  // Mindig a hívás pillanatában inicializálunk a környezeti kulccsal
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
+    const logoData = await getLogoAsBase64();
+    const parts: any[] = [];
+
+    // Ha sikerült letölteni a logót, hozzáadjuk első part-ként (referencia)
+    if (logoData.data) {
+      parts.push({
+        inlineData: {
+          data: logoData.data,
+          mimeType: logoData.mimeType
+        }
+      });
+    }
+
+    // Hozzáadjuk a szöveges utasítást
+    parts.push({
+      text: `Using the provided image as a strict visual reference for the character Kyogre (massive blue whale-like creature with glowing red lines), generate a new cinematic 4K digital artwork. Scenario: ${userPrompt}. Maintain the character's legendary essence and colors.`
+    });
+
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
-      contents: {
-        parts: [
-          {
-            text: `Professional 4K digital painting of ${kyogreDescription}. Scenario: ${userPrompt}. Masterpiece, high detail, epic oceanic atmosphere, glowing bioluminescent effects.`
-          }
-        ]
-      },
+      contents: { parts },
       config: {
         imageConfig: {
           aspectRatio: "1:1"
@@ -32,22 +61,20 @@ export async function generateKyogreMeme(userPrompt: string, apiKey: string): Pr
       }
     });
 
-    // Check if candidates and content parts exist
     const candidate = response.candidates?.[0];
     if (!candidate?.content?.parts) {
-      throw new Error("No response received from the Primal Engine.");
+      throw new Error("The Primal Engine returned an empty response.");
     }
 
-    // Iterate through parts to find the image data
     for (const part of candidate.content.parts) {
       if (part.inlineData?.data) {
         return `data:image/png;base64,${part.inlineData.data}`;
       }
     }
 
-    throw new Error("Image data was not found in the response.");
+    throw new Error("No image data found in response parts.");
   } catch (error: any) {
-    console.error("Gemini Error:", error);
-    throw new Error(error.message || "Summoning failed. Check if your API key is valid.");
+    console.error("Gemini Generation Error:", error);
+    throw new Error(error.message || "The Forge failed to summon the King.");
   }
 }
