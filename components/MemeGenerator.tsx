@@ -22,7 +22,7 @@ const MemeGenerator: React.FC = () => {
       setResult(imageUrl);
     } catch (err: any) {
       console.error("Forge Error:", err);
-      setError(err.message || "An unexpected error occurred in the abyss.");
+      setError(err.message || "An unexpected error occurred in the deep sea.");
     } finally {
       setLoading(false);
     }
@@ -42,7 +42,7 @@ const MemeGenerator: React.FC = () => {
             KYOGRE <span className="text-red-600">PRIMAL</span> FORGE
           </h2>
           <p className="text-slate-500 text-[10px] tracking-[0.4em] uppercase mb-12">
-            AI Meme Engine • Powered by Gemini 2.5 Flash
+            AI Meme Engine • Zero Manual Setup Required
           </p>
           
           <div className="bg-slate-950 p-6 md:p-10 border border-red-900/30 shadow-2xl mb-10 relative overflow-hidden">
@@ -51,7 +51,7 @@ const MemeGenerator: React.FC = () => {
                 type="text"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Ex: Kyogre rising from a pool of lava with Solana logos..."
+                placeholder="Ex: Kyogre surfing on a wave of gold coins in a neon city..."
                 className="flex-1 bg-black border border-red-900/40 p-4 text-white outline-none focus:border-red-600 font-mono text-sm"
               />
               <div className="flex gap-2">
@@ -77,14 +77,14 @@ const MemeGenerator: React.FC = () => {
               {loading ? (
                 <div className="text-center z-10">
                   <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                  <p className="text-red-500 font-black text-xs uppercase tracking-widest animate-pulse">Consulting the Deep...</p>
+                  <p className="text-red-500 font-black text-xs uppercase tracking-widest animate-pulse">Consulting the Primal Forces...</p>
                 </div>
               ) : result ? (
                 <div className="w-full h-full relative">
                   <img src={result} alt="Generated Kyogre" className="w-full h-full object-cover animate-in fade-in duration-700" />
                   <a 
                     href={result} 
-                    download={`kyogre-artifact-${Date.now()}.png`}
+                    download={`kyogre-meme-${Date.now()}.png`}
                     className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
                   >
                     <span className="bg-white text-black px-8 py-3 font-black uppercase text-xs tracking-widest">Download Artifact</span>
@@ -94,13 +94,13 @@ const MemeGenerator: React.FC = () => {
                 <div className="p-10 text-center">
                   <div className="text-red-600 font-black text-xl mb-4 uppercase tracking-tighter italic">FORGE OFFLINE</div>
                   <p className="text-slate-500 text-[11px] uppercase font-mono leading-relaxed max-w-xs mx-auto">
-                    {error.includes("API key") ? "The Primal Vault is locked. Ensure the API_KEY environment variable is correctly set." : error}
+                    {error.includes("API_KEY") ? "Missing API_KEY variable. Please configure it in your environment settings." : error}
                   </p>
                 </div>
               ) : (
                 <div className="text-center opacity-20 group-hover:opacity-40 transition-opacity">
                   <img src={CONFIG.LOGO_URL} className="w-32 h-32 mx-auto mb-4 grayscale" alt="Reference Logo" />
-                  <p className="text-[10px] uppercase font-black tracking-[0.4em]">Visual DNA Ready • Standby</p>
+                  <p className="text-[10px] uppercase font-black tracking-[0.4em]">Visual DNA Connected • Standby</p>
                 </div>
               )}
             </div>
@@ -113,7 +113,7 @@ const MemeGenerator: React.FC = () => {
                  onClick={() => { setPrompt(p); startGeneration(p); }}
                  className="text-[9px] uppercase font-bold text-slate-700 hover:text-red-500 transition-colors border-b border-transparent hover:border-red-500 pb-1"
                >
-                 Scenario {i+1}
+                 Idea {i+1}
                </button>
              ))}
           </div>
