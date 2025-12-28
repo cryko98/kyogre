@@ -31,14 +31,8 @@ async function getLogoAsBase64(): Promise<{ data: string; mimeType: string }> {
  * Uses process.env.API_KEY exclusively as per requirements.
  */
 export async function generateKyogreMeme(userPrompt: string): Promise<string> {
-  const apiKey = process.env.API_KEY;
-  
-  if (!apiKey) {
-    throw new Error("API_KEY environment variable is not defined. Please set it in Vercel settings and redeploy.");
-  }
-
-  // Initialize the GenAI client with the environment key
-  const ai = new GoogleGenAI({ apiKey });
+  // Always use process.env.API_KEY directly for initialization.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
     const logoData = await getLogoAsBase64();
@@ -74,7 +68,7 @@ export async function generateKyogreMeme(userPrompt: string): Promise<string> {
 
     const candidate = response.candidates?.[0];
     if (!candidate?.content?.parts) {
-      throw new Error("The Primal Engine failed to produce a result. Please try again.");
+      throw new Error("The Primal Engine failed to produce a result.");
     }
 
     // Find the image part in the response
@@ -87,6 +81,10 @@ export async function generateKyogreMeme(userPrompt: string): Promise<string> {
     throw new Error("No visual artifact was found in the model response.");
   } catch (error: any) {
     console.error("Gemini Forge Failure:", error);
+    // If the error is related to API key, provide a specific helpful message for the developer
+    if (error.message?.includes("API_KEY") || !process.env.API_KEY) {
+      throw new Error("Primal Forge Locked: API_KEY is missing in environment variables.");
+    }
     throw new Error(error.message || "Summoning failed. The ocean remains silent.");
   }
 }

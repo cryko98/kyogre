@@ -42,7 +42,7 @@ const MemeGenerator: React.FC = () => {
             KYOGRE <span className="text-red-600">PRIMAL</span> FORGE
           </h2>
           <p className="text-slate-500 text-[10px] tracking-[0.4em] uppercase mb-12">
-            AI Meme Engine • Zero Manual Setup Required
+            AI Meme Engine • Powered by Primal $KYOGRE Energy
           </p>
           
           <div className="bg-slate-950 p-6 md:p-10 border border-red-900/30 shadow-2xl mb-10 relative overflow-hidden">
@@ -92,9 +92,9 @@ const MemeGenerator: React.FC = () => {
                 </div>
               ) : error ? (
                 <div className="p-10 text-center">
-                  <div className="text-red-600 font-black text-xl mb-4 uppercase tracking-tighter italic">FORGE OFFLINE</div>
+                  <div className="text-red-600 font-black text-xl mb-4 uppercase tracking-tighter italic">FORGE ERROR</div>
                   <p className="text-slate-500 text-[11px] uppercase font-mono leading-relaxed max-w-xs mx-auto">
-                    {error.includes("API_KEY") ? "Missing API_KEY variable. Please configure it in your environment settings." : error}
+                    {error.includes("Locked") ? "Primal Forge Locked: Check Vercel Environment Variables (API_KEY) and Redeploy." : error}
                   </p>
                 </div>
               ) : (
