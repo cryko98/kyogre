@@ -12,7 +12,7 @@ const Header: React.FC = () => {
   }, []);
 
   const navItems = [
-    { name: 'About', href: '#about' },
+    { name: 'Burn Story', href: '#about' },
     { name: 'How to Buy', href: '#buy' },
     { name: 'Meme Gen', href: '#meme' },
     { name: 'Chart', href: '#chart' },
@@ -22,9 +22,9 @@ const Header: React.FC = () => {
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-black/90 py-2 backdrop-blur-md border-b border-red-600/30' : 'bg-transparent py-4'}`}>
       <div className="container mx-auto px-4 flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <img src={CONFIG.LOGO_URL} alt="Kyogre Logo" className="w-10 h-10 rounded-full border border-red-600 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+          <img src={CONFIG.LOGO_URL} alt="Burn Whale Logo" className="w-10 h-10 rounded-full border border-red-600 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
           <span className="font-special text-xl font-bold tracking-tighter hidden sm:block">
-            <span className="text-red-500">THE</span> KING
+            <span className="text-red-500">BURN</span> WHALE
           </span>
         </div>
         <nav className="flex gap-6 items-center">

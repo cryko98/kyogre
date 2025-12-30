@@ -1,21 +1,22 @@
 
 export const CONFIG = {
-  NAME: "The King Of The Sea",
-  TICKER: "$KYOGRE",
-  CA: "5VvJpqzSsEA1qLPW6cAtqkGg3AUZ8BviFAERe3HLpump",
-  LOGO_URL: "https://pbs.twimg.com/media/G9RaZv9WIAAUAcb?format=jpg&name=medium",
-  X_COMMUNITY: "https://x.com/i/communities/2005295800662839783",
-  DEXSCREENER_URL: "https://dexscreener.com/solana/5VvJpqzSsEA1qLPW6cAtqkGg3AUZ8BviFAERe3HLpump",
-  PUMP_FUN_URL: "https://pump.fun/5VvJpqzSsEA1qLPW6cAtqkGg3AUZ8BviFAERe3HLpump"
+  NAME: "Burn Whale",
+  TICKER: "$BurnWhale",
+  CA: "91D28GNxU4X5KFK8DjmBJ2z3N7628HfBLo6czJZ3pump",
+  LOGO_URL: "https://pbs.twimg.com/media/G9X8AV6XYAAVbG0?format=jpg&name=small",
+  BANNER_URL: "https://pbs.twimg.com/community_banner_img/2005770555463499776/ojptDBIH?format=jpg&name=small",
+  X_COMMUNITY: "https://x.com/i/communities/2005770428552458737",
+  DEXSCREENER_URL: "https://dexscreener.com/solana/91D28GNxU4X5KFK8DjmBJ2z3N7628HfBLo6czJZ3pump",
+  PUMP_FUN_URL: "https://pump.fun/91D28GNxU4X5KFK8DjmBJ2z3N7628HfBLo6czJZ3pump"
 };
 
 export const RANDOM_PROMPTS = [
-  "Kyogre wearing golden sunglasses and a massive diamond chain underwater",
-  "Kyogre jumping out of the ocean at sunset with Bitcoin logos in its eyes",
-  "Kyogre sitting on a throne made of deep sea crystals holding a trident",
-  "Kyogre destroying a fleet of FUD ships with an Origin Pulse beam",
-  "Kyogre surfing a giant tsunami made of dollar bills",
-  "Kyogre in a cyberpunk ocean neon city with laser beams",
-  "Kyogre trading Solana on a deep sea computer setup",
-  "Kyogre wearing a crown and being worshipped by other sea Pokémon"
+  "A massive majestic whale jumping through a ring of fire above a burning sea",
+  "A giant cybernetic whale with glowing red embers on its skin diving into a pool of burning Solana tokens",
+  "A whale wearing a tuxedo and holding a torch, setting fire to a chart that is going vertical",
+  "A majestic whale made of molten lava swimming through a cosmic nebula",
+  "A whale on a throne of fire, being showered in burning dollar bills",
+  "A whale emerging from a volcanic eruption under the ocean",
+  "A whale wearing a crown of fire with laser eyes burning the supply",
+  "A whale ship flying through space made of pure white flames"
 ];

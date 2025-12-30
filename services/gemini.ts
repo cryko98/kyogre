@@ -4,7 +4,7 @@ import { CONFIG } from "../constants";
 
 /**
  * Downloads the project logo and converts it to base64 to use as a visual DNA reference.
- * This ensures the AI understands the specific look of Kyogre.
+ * This ensures the AI understands the specific look of the Burn Whale.
  */
 async function getLogoAsBase64(): Promise<{ data: string; mimeType: string }> {
   try {
@@ -27,8 +27,7 @@ async function getLogoAsBase64(): Promise<{ data: string; mimeType: string }> {
 }
 
 /**
- * Generates a Kyogre meme using the project logo as visual reference.
- * Uses process.env.API_KEY exclusively as per requirements.
+ * Generates a Burn Whale meme using the project logo as visual reference.
  */
 export async function generateKyogreMeme(userPrompt: string): Promise<string> {
   // Always use process.env.API_KEY directly for initialization.
@@ -38,7 +37,6 @@ export async function generateKyogreMeme(userPrompt: string): Promise<string> {
     const logoData = await getLogoAsBase64();
     const parts: any[] = [];
 
-    // Providing the logo as inlineData provides a visual reference for the AI
     if (logoData.data) {
       parts.push({
         inlineData: {
@@ -48,12 +46,13 @@ export async function generateKyogreMeme(userPrompt: string): Promise<string> {
       });
     }
 
-    // Explicit instructions to maintain the "Kyogre" character design
+    // Updated instructions for "Burn Whale"
     parts.push({
-      text: `VISUAL DNA REFERENCE: Use the provided image to generate a high-quality 4K cinematic artwork of the character Kyogre. 
+      text: `VISUAL DNA REFERENCE: Use the provided image to generate a high-quality 4K cinematic artwork of the "Burn Whale".
+      Character details: A massive, majestic whale often depicted with glowing red embers, fire effects, or made of molten lava.
       Scenario: ${userPrompt}. 
-      Strictly maintain the sapphire blue whale-like body, white belly, and glowing red lines/markings on the fins. 
-      The style should be epic, legendary, and vibrant.`
+      The style should be epic, legendary, and highly detailed with a strong emphasis on fire, burning effects, and deflationary themes. 
+      Maintain a consistent look for the whale based on the provided logo.`
     });
 
     const response = await ai.models.generateContent({
@@ -68,10 +67,9 @@ export async function generateKyogreMeme(userPrompt: string): Promise<string> {
 
     const candidate = response.candidates?.[0];
     if (!candidate?.content?.parts) {
-      throw new Error("The Primal Engine failed to produce a result.");
+      throw new Error("The Burn Engine failed to produce a result.");
     }
 
-    // Find the image part in the response
     for (const part of candidate.content.parts) {
       if (part.inlineData?.data) {
         return `data:image/png;base64,${part.inlineData.data}`;
@@ -81,10 +79,9 @@ export async function generateKyogreMeme(userPrompt: string): Promise<string> {
     throw new Error("No visual artifact was found in the model response.");
   } catch (error: any) {
     console.error("Gemini Forge Failure:", error);
-    // If the error is related to API key, provide a specific helpful message for the developer
     if (error.message?.includes("API_KEY") || !process.env.API_KEY) {
       throw new Error("Primal Forge Locked: API_KEY is missing in environment variables.");
     }
-    throw new Error(error.message || "Summoning failed. The ocean remains silent.");
+    throw new Error(error.message || "Summoning failed. The flames went out.");
   }
 }
