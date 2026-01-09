@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -8,52 +8,59 @@ import MemeGenerator from './components/MemeGenerator';
 import Chart from './components/Chart';
 import Footer from './components/Footer';
 
-const StormBackground: React.FC = () => {
-  const [isFlashing, setIsFlashing] = useState(false);
-  const [boltPosition, setBoltPosition] = useState(50);
-  const [strikeKey, setStrikeKey] = useState(0);
+const CosmicBackground: React.FC = () => {
+  // Generate static stars to avoid re-renders causing flickering
+  const stars = useMemo(() => {
+    return Array.from({ length: 150 }).map((_, i) => {
+      const size = Math.random() * 3 + 1; // 1px to 4px
+      const top = Math.random() * 100;
+      const left = Math.random() * 100;
+      const duration = Math.random() * 3 + 2; // 2s to 5s twinkle
+      const delay = Math.random() * 5;
+      const opacity = Math.random() * 0.7 + 0.3;
+      // Mostly white/cyan stars
+      const color = Math.random() > 0.7 ? '#22d3ee' : '#ffffff'; 
 
-  useEffect(() => {
-    // Random lightning loop
-    const triggerLightning = () => {
-      // 1. Set position randomly
-      setBoltPosition(Math.random() * 90 + 5); // 5% to 95% screen width
-      
-      // 2. Trigger Flash
-      setIsFlashing(true);
-      setStrikeKey(prev => prev + 1); // Trigger bolt animation reflow
-      
-      // 3. Reset Flash shortly after
-      setTimeout(() => setIsFlashing(false), 150); // Flash duration
-
-      // 4. Schedule next strike (random between 3s and 10s)
-      const nextStrikeDelay = Math.random() * 7000 + 3000;
-      timeoutId = setTimeout(triggerLightning, nextStrikeDelay);
-    };
-
-    let timeoutId = setTimeout(triggerLightning, 3000);
-
-    return () => clearTimeout(timeoutId);
+      return (
+        <div
+          key={i}
+          className="star"
+          style={{
+            width: `${size}px`,
+            height: `${size}px`,
+            top: `${top}%`,
+            left: `${left}%`,
+            backgroundColor: color,
+            animationDuration: `${duration}s`,
+            animationDelay: `${delay}s`,
+            opacity: opacity
+          }}
+        />
+      );
+    });
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#020617]">
-      {/* MIST LAYERS */}
-      <div className="mist-container">
-        <div className="mist"></div>
-        <div className="mist"></div>
-      </div>
+    <div className="universe-container">
+      {/* Stars */}
+      {stars}
 
-      {/* LIGHTNING LAYERS */}
-      <div className={`lightning-flash ${isFlashing ? 'active' : ''}`}></div>
+      {/* Blue Nebulas / Mist */}
       <div 
-        key={strikeKey}
-        className={`bolt ${isFlashing ? 'strike' : ''}`} 
-        style={{ left: `${boltPosition}%` }}
+        className="nebula" 
+        style={{ top: '10%', left: '20%', width: '40vw', height: '40vw', background: 'radial-gradient(circle, rgba(34, 211, 238, 0.15) 0%, transparent 70%)' }}
       ></div>
-      
-      {/* Background overlay for depth */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-[#020617]/50"></div>
+      <div 
+        className="nebula" 
+        style={{ top: '60%', left: '60%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 70%)', animationDelay: '-10s' }}
+      ></div>
+       <div 
+        className="nebula" 
+        style={{ top: '80%', left: '-10%', width: '30vw', height: '30vw', background: 'radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%)', animationDelay: '-25s' }}
+      ></div>
+
+      {/* Scanlines overlay for slight retro feel (optional, kept subtle) */}
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
     </div>
   );
 };
@@ -64,15 +71,13 @@ const App: React.FC = () => {
     const observerOptions = {
       root: null,
       rootMargin: '0px',
-      threshold: 0.15 // Trigger when 15% of element is visible
+      threshold: 0.1 // Trigger slightly earlier
     };
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('active');
-          // Optional: Stop observing once revealed
-          // observer.unobserve(entry.target); 
         }
       });
     }, observerOptions);
@@ -85,7 +90,7 @@ const App: React.FC = () => {
 
   return (
     <div className="relative min-h-screen bg-[#020617] overflow-x-hidden selection:bg-cyan-500 selection:text-black">
-      <StormBackground />
+      <CosmicBackground />
       <div className="relative z-10">
         <Header />
         <main>
