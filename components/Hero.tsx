@@ -9,74 +9,69 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center pt-24 overflow-hidden bg-transparent">
-      {/* Visual background layers - adjusted for the new global fire effect */}
-      <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-red-600/10 via-transparent to-transparent pointer-events-none"></div>
+    <section className="relative min-h-screen flex items-center pt-24 overflow-hidden">
+      {/* Dynamic Hero Background Image */}
+      <div 
+        className="absolute inset-0 z-0 opacity-70 bg-center bg-cover bg-no-repeat"
+        style={{ backgroundImage: `url(${CONFIG.HERO_BG})` }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-[#020617]/50 via-[#020617]/20 to-[#020617]"></div>
+      </div>
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-left">
-            <div className="inline-block px-3 py-1 bg-red-600/20 border border-red-600 text-red-500 text-xs font-black tracking-widest uppercase mb-4">
-              Deflationary Primal Force
+            <div className="inline-block px-4 py-2 bg-cyan-900/30 border border-cyan-400 rounded-full text-cyan-300 text-xs font-black tracking-widest uppercase mb-6 shadow-[0_0_10px_rgba(34,211,238,0.3)]">
+              The Legend is True
             </div>
-            <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter leading-tight">
-              <span className="text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">BURN</span> <br />
-              <span className="text-red-600 drop-shadow-[0_0_15px_rgba(239,68,68,0.4)]">WHALE</span>
+            <h1 className="text-7xl md:text-9xl font-black mb-6 tracking-tight leading-none drop-shadow-xl text-white">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">FLUFFIN</span>
             </h1>
             
-            <div className="max-w-xl space-y-4 mb-10">
-              <p className="text-lg text-slate-300 leading-relaxed font-light">
-                The apex predator of the Solana whale meta has arrived with one mission: <span className="text-white font-bold italic">Incinerate the Supply</span>. Born from a massive 20% initial burn, $BurnWhale continues to consume the supply through relentless buybacks.
+            <div className="max-w-xl space-y-6 mb-10">
+              <p className="text-xl text-blue-100 leading-relaxed font-bold drop-shadow-md">
+                Born from a legendary transaction. When <span className="text-cyan-400 font-black">@TheWhiteWhaleV2</span> sent USDC to the wallet, <span className="text-white font-black">$FLUFFIN</span> appeared. 
               </p>
-              <p className="text-md text-red-500 font-mono tracking-tight uppercase border-l-2 border-red-600 pl-4 bg-red-900/10 py-2">
-                "20% Supply Already Burned. Constant Buybacks. Total Dominance."
+              <p className="text-md text-slate-300 font-bold italic border-l-4 border-cyan-400 pl-4 bg-blue-950/40 py-3 rounded-r-lg backdrop-blur-sm">
+                "It wasn't a whale that emerged... it was a cute, fluffy monster ready to take over Solana."
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 items-start mb-8">
-              <div className="flex bg-slate-900/80 backdrop-blur-sm border border-red-600/50 rounded-sm overflow-hidden w-full sm:w-auto">
-                <div className="px-4 py-3 text-xs md:text-sm font-mono truncate text-white max-w-[200px] md:max-w-none">
+              <div className="flex bg-black/60 backdrop-blur-md border border-cyan-500/50 rounded-full overflow-hidden w-full sm:w-auto shadow-[0_0_20px_rgba(34,211,238,0.2)]">
+                <div className="px-6 py-3 text-xs md:text-sm font-mono truncate text-cyan-200 max-w-[200px] md:max-w-none">
                   {CONFIG.CA}
                 </div>
                 <button 
                   onClick={copyToClipboard}
-                  className="bg-red-600 hover:bg-red-700 px-4 transition-colors text-xs font-black uppercase tracking-widest text-white"
+                  className="bg-cyan-500 hover:bg-cyan-400 px-6 transition-colors text-xs font-black uppercase tracking-widest text-black"
                 >
                   COPY
                 </button>
               </div>
-              <a href={CONFIG.PUMP_FUN_URL} className="w-full sm:w-auto text-center px-8 py-3 bg-white text-black font-black text-sm hover:bg-red-600 hover:text-white transition-all uppercase tracking-widest border border-white">
-                PUMP.FUN
-              </a>
             </div>
 
-            <div className="flex gap-6 items-center opacity-80">
-                <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 bg-red-600 rounded-full animate-ping"></div>
-                    <span className="text-[10px] uppercase font-black tracking-[0.2em] text-red-500">{CONFIG.TICKER} INCINERATOR ACTIVE</span>
-                </div>
-                <a href={CONFIG.X_COMMUNITY} className="text-[10px] uppercase font-black tracking-[0.2em] border-b border-white hover:text-red-500 hover:border-red-500 transition-all text-white">JOIN THE BURN</a>
+            <div className="flex gap-4">
+               <a href={CONFIG.PUMP_FUN_URL} className="px-8 py-3 bg-white text-black font-black text-sm rounded-full hover:bg-cyan-300 transition-all uppercase tracking-widest shadow-lg hover:scale-105 transform duration-200 border-2 border-transparent hover:border-white">
+                Buy on Pump.fun
+              </a>
+              <a href={CONFIG.X_COMMUNITY} className="px-8 py-3 bg-blue-900/60 text-white border border-blue-400 font-bold text-sm rounded-full hover:bg-blue-800 transition-all uppercase tracking-widest">
+                Join Community
+              </a>
             </div>
           </div>
 
           <div className="relative flex justify-center lg:justify-end">
-            <div className="absolute inset-0 bg-red-600 blur-[150px] opacity-25 animate-pulse"></div>
             <div className="relative z-10 group">
-              <div className="absolute -inset-1 bg-red-600 rounded-full opacity-30 group-hover:opacity-100 blur transition duration-1000 group-hover:duration-200"></div>
+              <div className="absolute inset-0 bg-cyan-500 rounded-full opacity-20 blur-[80px] animate-pulse"></div>
               <img 
                 src={CONFIG.LOGO_URL} 
-                alt="Burn Whale Hero" 
-                className="w-72 h-72 md:w-[450px] md:h-[450px] rounded-full relative z-20 border-8 border-black shadow-[0_0_50px_rgba(239,68,68,0.3)] animate-float transition-all duration-700"
+                alt="Fluffin Character" 
+                className="w-64 h-64 md:w-[400px] md:h-[400px] rounded-full relative z-20 border-8 border-cyan-400/30 shadow-[0_0_60px_rgba(34,211,238,0.4)] animate-float"
               />
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <svg className="w-6 h-6 text-red-600" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" viewBox="0 0 24 24" stroke="currentColor">
-          <path d="M19 14l-7 7-7-7"></path>
-        </svg>
       </div>
     </section>
   );

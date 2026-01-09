@@ -1,22 +1,22 @@
 
 export const CONFIG = {
-  NAME: "Burn Whale",
-  TICKER: "$BurnWhale",
-  CA: "91D28GNxU4X5KFK8DjmBJ2z3N7628HfBLo6czJZ3pump",
-  LOGO_URL: "https://pbs.twimg.com/media/G9X8AV6XYAAVbG0?format=jpg&name=small",
-  BANNER_URL: "https://pbs.twimg.com/community_banner_img/2005770555463499776/ojptDBIH?format=jpg&name=small",
-  X_COMMUNITY: "https://x.com/i/communities/2005770428552458737",
-  DEXSCREENER_URL: "https://dexscreener.com/solana/91D28GNxU4X5KFK8DjmBJ2z3N7628HfBLo6czJZ3pump",
-  PUMP_FUN_URL: "https://pump.fun/91D28GNxU4X5KFK8DjmBJ2z3N7628HfBLo6czJZ3pump"
+  NAME: "FLUFFIN",
+  TICKER: "$FLUFFIN",
+  CA: "8xoLtjqXJDYkmECYAriANoiToXFNhgGfYx9Vj4nkpump",
+  LOGO_URL: "https://pbs.twimg.com/media/G-NnBy6W8AAcQY8?format=jpg&name=medium",
+  HERO_BG: "https://pbs.twimg.com/media/G-NbfZsa0AAM6Jt?format=jpg&name=medium",
+  X_COMMUNITY: "https://x.com/i/communities/2009538086804525406",
+  DEXSCREENER_URL: "https://dexscreener.com/solana/8xoLtjqXJDYkmECYAriANoiToXFNhgGfYx9Vj4nkpump",
+  PUMP_FUN_URL: "https://pump.fun/8xoLtjqXJDYkmECYAriANoiToXFNhgGfYx9Vj4nkpump"
 };
 
 export const RANDOM_PROMPTS = [
-  "A massive majestic whale jumping through a ring of fire above a burning sea",
-  "A giant cybernetic whale with glowing red embers on its skin diving into a pool of burning Solana tokens",
-  "A whale wearing a tuxedo and holding a torch, setting fire to a chart that is going vertical",
-  "A majestic whale made of molten lava swimming through a cosmic nebula",
-  "A whale on a throne of fire, being showered in burning dollar bills",
-  "A whale emerging from a volcanic eruption under the ocean",
-  "A whale wearing a crown of fire with laser eyes burning the supply",
-  "A whale ship flying through space made of pure white flames"
+  "A cute fluffy monster eating a cookie on the moon",
+  "Fluffin the monster surfing on a cloud of cotton candy",
+  "A neon glowing fluffy creature holding a solana coin",
+  "A cinematic shot of a cute monster made of pink fur wearing sunglasses",
+  "Fluffin hugging a giant USDC coin",
+  "A fluffy monster DJing at a party in space",
+  "A cyberpunk style cute monster with big eyes in a neon city",
+  "Fluffin sleeping on a pile of gold coins"
 ];

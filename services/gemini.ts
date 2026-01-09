@@ -4,7 +4,6 @@ import { CONFIG } from "../constants";
 
 /**
  * Downloads the project logo and converts it to base64 to use as a visual DNA reference.
- * This ensures the AI understands the specific look of the Burn Whale.
  */
 async function getLogoAsBase64(): Promise<{ data: string; mimeType: string }> {
   try {
@@ -21,16 +20,15 @@ async function getLogoAsBase64(): Promise<{ data: string; mimeType: string }> {
       reader.readAsDataURL(blob);
     });
   } catch (error) {
-    console.warn("Reference logo unavailable, using text-only summoning.", error);
+    console.warn("Reference logo unavailable.", error);
     return { data: "", mimeType: "" };
   }
 }
 
 /**
- * Generates a Burn Whale meme using the project logo as visual reference.
+ * Generates a Fluffin meme.
  */
 export async function generateKyogreMeme(userPrompt: string): Promise<string> {
-  // Always use process.env.API_KEY directly for initialization.
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
@@ -46,13 +44,13 @@ export async function generateKyogreMeme(userPrompt: string): Promise<string> {
       });
     }
 
-    // Updated instructions for "Burn Whale"
+    // Updated instructions for "FLUFFIN"
     parts.push({
-      text: `VISUAL DNA REFERENCE: Use the provided image to generate a high-quality 4K cinematic artwork of the "Burn Whale".
-      Character details: A massive, majestic whale often depicted with glowing red embers, fire effects, or made of molten lava.
+      text: `VISUAL REFERENCE: Use the provided image to generate a high-quality 3D or 2D cute art style image of "Fluffin".
+      Character details: A cute, fuzzy, monster-like creature. It should look friendly, chaotic but adorable. 
       Scenario: ${userPrompt}. 
-      The style should be epic, legendary, and highly detailed with a strong emphasis on fire, burning effects, and deflationary themes. 
-      Maintain a consistent look for the whale based on the provided logo.`
+      The style should be colorful, vibrant, and fun (Pixar-esque or high quality anime style). 
+      Avoid fire or scary themes unless specifically asked. Keep it "fluffy".`
     });
 
     const response = await ai.models.generateContent({
@@ -67,7 +65,7 @@ export async function generateKyogreMeme(userPrompt: string): Promise<string> {
 
     const candidate = response.candidates?.[0];
     if (!candidate?.content?.parts) {
-      throw new Error("The Burn Engine failed to produce a result.");
+      throw new Error("The Factory failed to produce a result.");
     }
 
     for (const part of candidate.content.parts) {
@@ -76,12 +74,12 @@ export async function generateKyogreMeme(userPrompt: string): Promise<string> {
       }
     }
 
-    throw new Error("No visual artifact was found in the model response.");
+    throw new Error("No visual artifact was found.");
   } catch (error: any) {
-    console.error("Gemini Forge Failure:", error);
+    console.error("Gemini Failure:", error);
     if (error.message?.includes("API_KEY") || !process.env.API_KEY) {
-      throw new Error("Primal Forge Locked: API_KEY is missing in environment variables.");
+      throw new Error("API_KEY is missing in environment variables.");
     }
-    throw new Error(error.message || "Summoning failed. The flames went out.");
+    throw new Error(error.message || "Generation failed.");
   }
 }

@@ -5,39 +5,39 @@ import { CONFIG } from '../constants';
 const HowToBuy: React.FC = () => {
   const steps = [
     {
-      title: "PREPARE VAULT",
-      description: "Get Phantom from your app store. Set up your wallet. Secure your recovery phrase like it's the last drop of water."
+      title: "GET PHANTOM",
+      description: "Download Phantom wallet. It's the cozy home for your future $FLUFFIN."
     },
     {
-      title: "LOAD SOL",
-      description: "Buy SOL on an exchange or inside Phantom. This is the energy source used to summon $BurnWhale."
+      title: "GET SOL",
+      description: "Load up on SOL. You'll need it to swap for the fluffiest token on chain."
     },
     {
-      title: "PUMP IT",
-      description: "Navigate to Pump.fun. Paste our CA into the search bar. Look for the glowing whale logo."
+      title: "GO TO PUMP.FUN",
+      description: "Head over to Pump.fun and find the $FLUFFIN page using our CA."
     },
     {
-      title: "BURN THE SOL",
-      description: "Swap SOL for $BurnWhale. Zero taxes. Maximum burn. Join the most deflationary pod in the ocean."
+      title: "BECOME FLUFFY",
+      description: "Swap SOL for $FLUFFIN. Welcome to the White Whale's extended family."
     }
   ];
 
   return (
     <section id="buy" className="py-24 bg-transparent">
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl md:text-6xl font-black text-center mb-16 uppercase tracking-tighter">
-          SUMMON THE <br /><span className="text-red-600 underline decoration-red-900/50 underline-offset-8">WHALE</span>
+        <h2 className="text-4xl md:text-6xl font-black text-center mb-16 reveal">
+          HOW TO <span className="text-cyan-400">ADOPT</span>
         </h2>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 reveal-group">
           {steps.map((step, index) => (
-            <div key={index} className="bg-slate-950/40 backdrop-blur-sm p-8 rounded-none border border-red-900/20 relative group hover:border-red-600 transition-all duration-300">
-              <div className="text-7xl font-black text-red-900/10 absolute top-4 right-4 z-0 group-hover:text-red-600/20 transition-colors">
+            <div key={index} className="reveal-child bg-blue-950/20 backdrop-blur-sm p-8 rounded-2xl border border-blue-500/20 relative group hover:border-cyan-400 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(34,211,238,0.2)]">
+              <div className="text-6xl font-black text-cyan-500/10 absolute top-4 right-4 z-0 group-hover:text-cyan-500/20 transition-colors">
                 {index + 1}
               </div>
               <div className="relative z-10">
-                <h3 className="text-xl font-black mb-4 uppercase text-white tracking-widest">{step.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">
+                <h3 className="text-xl font-bold mb-4 text-white uppercase">{step.title}</h3>
+                <p className="text-blue-200 text-sm leading-relaxed font-semibold">
                   {step.description}
                 </p>
               </div>
@@ -45,12 +45,12 @@ const HowToBuy: React.FC = () => {
           ))}
         </div>
 
-        <div className="mt-16 text-center">
+        <div className="mt-16 text-center reveal">
           <a 
             href={CONFIG.PUMP_FUN_URL} 
-            className="inline-block bg-white text-black px-12 py-5 font-black text-xl hover:bg-red-600 hover:text-white transition-all uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+            className="inline-block bg-cyan-500 text-black px-12 py-5 font-black text-xl rounded-full hover:bg-cyan-400 transition-all uppercase tracking-widest shadow-[0_0_30px_rgba(34,211,238,0.4)] hover:scale-110 hover:shadow-[0_0_50px_rgba(34,211,238,0.6)]"
           >
-            JOIN ON PUMP.FUN
+            ADOPT ON PUMP.FUN
           </a>
         </div>
       </div>
