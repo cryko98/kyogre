@@ -1,22 +1,23 @@
 
 export const CONFIG = {
-  NAME: "FLUFFIN",
-  TICKER: "$FLUFFIN",
-  CA: "8xoLtjqXJDYkmECYAriANoiToXFNhgGfYx9Vj4nkpump",
-  LOGO_URL: "https://pbs.twimg.com/media/G-NnBy6W8AAcQY8?format=jpg&name=medium",
-  HERO_BG: "https://pbs.twimg.com/media/G-NbfZsa0AAM6Jt?format=jpg&name=medium",
-  X_COMMUNITY: "https://x.com/i/communities/2009538086804525406",
-  DEXSCREENER_URL: "https://dexscreener.com/solana/8xoLtjqXJDYkmECYAriANoiToXFNhgGfYx9Vj4nkpump",
-  PUMP_FUN_URL: "https://pump.fun/8xoLtjqXJDYkmECYAriANoiToXFNhgGfYx9Vj4nkpump"
+  NAME: "NARUTO UZUMAKI",
+  TICKER: "$NARUTO",
+  CA: "ATQ1GtoGdBzBCGRAHa89vXdwDE3G3WCb92hcQ4c8pump",
+  LOGO_URL: "https://pbs.twimg.com/media/G-jDPofWIAAKS4d?format=jpg&name=900x900",
+  // Using a cool Naruto wallpaper for the hero BG
+  HERO_BG: "https://wallpapers.com/images/hd/naruto-shippuden-4k-desktop-fox-mode-j82u82s2f8q2k2f2.jpg", 
+  X_COMMUNITY: "https://x.com/i/communities/2010984294076801492",
+  DEXSCREENER_URL: "https://dexscreener.com/solana/ATQ1GtoGdBzBCGRAHa89vXdwDE3G3WCb92hcQ4c8pump",
+  PUMP_FUN_URL: "https://pump.fun/ATQ1GtoGdBzBCGRAHa89vXdwDE3G3WCb92hcQ4c8pump"
 };
 
 export const RANDOM_PROMPTS = [
-  "A cute fluffy monster eating a cookie on the moon",
-  "Fluffin the monster surfing on a cloud of cotton candy",
-  "A neon glowing fluffy creature holding a solana coin",
-  "A cinematic shot of a cute monster made of pink fur wearing sunglasses",
-  "Fluffin hugging a giant USDC coin",
-  "A fluffy monster DJing at a party in space",
-  "A cyberpunk style cute monster with big eyes in a neon city",
-  "Fluffin sleeping on a pile of gold coins"
+  "Naruto eating Ichiraku Ramen with Kurama",
+  "Naruto performing a Rasengan in a cyberpunk city",
+  "Naruto as the Hokage sitting on his throne",
+  "Naruto and Sasuke fighting back to back against aliens",
+  "A cute Chibi Naruto sleeping on a giant scroll",
+  "Naruto in Sage Mode meditating in nature",
+  "Naruto high fiving a Solana logo",
+  "Kurama the Nine-Tails wearing visually cool sunglasses"
 ];

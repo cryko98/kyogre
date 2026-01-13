@@ -4,13 +4,13 @@ import { CONFIG } from '../constants';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-black/80 py-20 border-t border-cyan-500/20 backdrop-blur-lg">
+    <footer className="bg-black py-20 border-t-4 border-orange-600">
       <div className="container mx-auto px-4 text-center">
         <div className="flex flex-col items-center gap-10">
           <div className="flex items-center gap-4">
-            <img src={CONFIG.LOGO_URL} alt="Fluffin Small" className="w-12 h-12 rounded-full border border-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.5)]" />
+            <img src={CONFIG.LOGO_URL} alt="Naruto Small" className="w-12 h-12 rounded-full border-2 border-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.5)]" />
             <span className="font-special text-3xl font-black tracking-tight uppercase text-white">
-              $FLUFFIN
+              $NARUTO
             </span>
           </div>
 
@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
               href={CONFIG.X_COMMUNITY} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-white hover:text-cyan-400 transition-colors"
+              className="text-white hover:text-orange-500 transition-colors"
               aria-label="X Community"
             >
               <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
@@ -30,18 +30,18 @@ const Footer: React.FC = () => {
               href={CONFIG.PUMP_FUN_URL} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-cyan-400 hover:text-white transition-all font-black text-xl uppercase tracking-widest"
+              className="text-orange-500 hover:text-white transition-all font-black text-xl uppercase tracking-widest font-special"
             >
               PUMP
             </a>
           </div>
 
-          <div className="max-w-xl text-slate-500 text-[10px] leading-relaxed uppercase tracking-wider font-bold">
-            Disclaimer: $FLUFFIN is a community memecoin created when TheWhiteWhaleV2 sent USDC to the wallet. It is for entertainment purposes only.
+          <div className="max-w-xl text-neutral-600 text-[10px] leading-relaxed uppercase tracking-wider font-bold">
+            Disclaimer: $NARUTO is a community tribute token. We are not affiliated with Masashi Kishimoto, Shueisha, or Pierrot. This is for fans, by fans.
           </div>
 
-          <div className="text-blue-500 font-special tracking-[0.5em] text-[10px] uppercase pt-10">
-            &copy; 2026 FLUFFIN. STAY FLUFFY.
+          <div className="text-orange-800 font-special tracking-[0.3em] text-[10px] uppercase pt-10">
+            &copy; 2026 KONOHAGAKURE. WILL OF FIRE.
           </div>
         </div>
       </div>

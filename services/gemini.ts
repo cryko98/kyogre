@@ -26,12 +26,13 @@ async function getLogoAsBase64(): Promise<{ data: string; mimeType: string }> {
 }
 
 /**
- * Generates a Fluffin meme.
+ * Generates a Naruto meme.
  */
 export async function generateKyogreMeme(userPrompt: string): Promise<string> {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
+    // Note: We are using the logo as reference, but the prompt overrides the style significantly
     const logoData = await getLogoAsBase64();
     const parts: any[] = [];
 
@@ -44,13 +45,12 @@ export async function generateKyogreMeme(userPrompt: string): Promise<string> {
       });
     }
 
-    // Updated instructions for "FLUFFIN"
+    // Updated instructions for "NARUTO"
     parts.push({
-      text: `VISUAL REFERENCE: Use the provided image to generate a high-quality 3D or 2D cute art style image of "Fluffin".
-      Character details: A cute, fuzzy, monster-like creature. It should look friendly, chaotic but adorable. 
+      text: `VISUAL STYLE: High-quality anime art style, specifically resembling the Naruto Shippuden art style.
+      Character details: Focus on Naruto Uzumaki (orange tracksuit, blonde spiky hair, headband) or characters from the Naruto universe.
       Scenario: ${userPrompt}. 
-      The style should be colorful, vibrant, and fun (Pixar-esque or high quality anime style). 
-      Avoid fire or scary themes unless specifically asked. Keep it "fluffy".`
+      Vibe: Epic, energetic, action-packed, or funny anime meme style. Use vibrant oranges, yellows, and dynamic lighting (chakra effects).`
     });
 
     const response = await ai.models.generateContent({
@@ -65,7 +65,7 @@ export async function generateKyogreMeme(userPrompt: string): Promise<string> {
 
     const candidate = response.candidates?.[0];
     if (!candidate?.content?.parts) {
-      throw new Error("The Factory failed to produce a result.");
+      throw new Error("The Jutsu failed to produce a result.");
     }
 
     for (const part of candidate.content.parts) {

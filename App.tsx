@@ -8,32 +8,25 @@ import MemeGenerator from './components/MemeGenerator';
 import Chart from './components/Chart';
 import Footer from './components/Footer';
 
-const CosmicBackground: React.FC = () => {
-  // Generate static stars to avoid re-renders causing flickering
-  const stars = useMemo(() => {
-    return Array.from({ length: 150 }).map((_, i) => {
-      const size = Math.random() * 3 + 1; // 1px to 4px
-      const top = Math.random() * 100;
+const FireBackground: React.FC = () => {
+  // Generate static embers
+  const embers = useMemo(() => {
+    return Array.from({ length: 50 }).map((_, i) => {
+      const size = Math.random() * 4 + 2; 
       const left = Math.random() * 100;
-      const duration = Math.random() * 3 + 2; // 2s to 5s twinkle
-      const delay = Math.random() * 5;
-      const opacity = Math.random() * 0.7 + 0.3;
-      // Mostly white/cyan stars
-      const color = Math.random() > 0.7 ? '#22d3ee' : '#ffffff'; 
-
+      const duration = Math.random() * 5 + 5; // 5s to 10s rise
+      const delay = Math.random() * 10;
+      
       return (
         <div
           key={i}
-          className="star"
+          className="ember"
           style={{
             width: `${size}px`,
             height: `${size}px`,
-            top: `${top}%`,
             left: `${left}%`,
-            backgroundColor: color,
             animationDuration: `${duration}s`,
-            animationDelay: `${delay}s`,
-            opacity: opacity
+            animationDelay: `-${delay}s`,
           }}
         />
       );
@@ -41,26 +34,22 @@ const CosmicBackground: React.FC = () => {
   }, []);
 
   return (
-    <div className="universe-container">
-      {/* Stars */}
-      {stars}
+    <div className="fire-container">
+      {/* Embers */}
+      {embers}
 
-      {/* Blue Nebulas / Mist */}
+      {/* Chakra Auras */}
       <div 
-        className="nebula" 
-        style={{ top: '10%', left: '20%', width: '40vw', height: '40vw', background: 'radial-gradient(circle, rgba(34, 211, 238, 0.15) 0%, transparent 70%)' }}
+        className="chakra-aura" 
+        style={{ top: '20%', left: '10%', width: '40vw', height: '40vw' }}
       ></div>
       <div 
-        className="nebula" 
-        style={{ top: '60%', left: '60%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 70%)', animationDelay: '-10s' }}
-      ></div>
-       <div 
-        className="nebula" 
-        style={{ top: '80%', left: '-10%', width: '30vw', height: '30vw', background: 'radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%)', animationDelay: '-25s' }}
+        className="chakra-aura" 
+        style={{ top: '60%', left: '60%', width: '50vw', height: '50vw', animationDelay: '-2s' }}
       ></div>
 
-      {/* Scanlines overlay for slight retro feel (optional, kept subtle) */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
+      {/* Noise Texture */}
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay"></div>
     </div>
   );
 };
@@ -89,8 +78,8 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#020617] overflow-x-hidden selection:bg-cyan-500 selection:text-black">
-      <CosmicBackground />
+    <div className="relative min-h-screen bg-[#0a0a0a] overflow-x-hidden selection:bg-orange-500 selection:text-black">
+      <FireBackground />
       <div className="relative z-10">
         <Header />
         <main>
